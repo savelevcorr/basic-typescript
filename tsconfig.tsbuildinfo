@@ -58,8 +58,8 @@
         "signature": "3e0a459888f32b42138d5a39f706ff2d55d500ab1031e0988b5568b0f67c2303"
       },
       "./src/app.ts": {
-        "version": "62a8723948defa0ada56531409d521e9ccee30ff428f1456e9feeefef968775e",
-        "signature": "68d6238ceaad1432f49defece75dd7cbcb681771c35d181e27d2aec93cc7e7bb"
+        "version": "ff5598e7b587ab6d41367c8ef19de0e72e3cba9cf558eaa4ac913681cd8f0a03",
+        "signature": "3bcad6b1078025b8cfaf6ed9022e3a30376dff5a344f05cd06d30f92e4163ad8"
       }
     },
     "options": {
@@ -87,38 +87,6 @@
     "referencedMap": {},
     "exportedModulesMap": {},
     "semanticDiagnosticsPerFile": [
-      [
-        "./src/app.ts",
-        [
-          {
-            "file": "./src/app.ts",
-            "start": 2799,
-            "length": 5,
-            "messageText": "'title' is declared but its value is never read.",
-            "category": 1,
-            "code": 6133,
-            "reportsUnnecessary": true
-          },
-          {
-            "file": "./src/app.ts",
-            "start": 2806,
-            "length": 4,
-            "messageText": "'desc' is declared but its value is never read.",
-            "category": 1,
-            "code": 6133,
-            "reportsUnnecessary": true
-          },
-          {
-            "file": "./src/app.ts",
-            "start": 2812,
-            "length": 6,
-            "messageText": "'people' is declared but its value is never read.",
-            "category": 1,
-            "code": 6133,
-            "reportsUnnecessary": true
-          }
-        ]
-      ],
       "../../../../usr/local/lib/node_modules/typescript/lib/lib.es5.d.ts",
       "../../../../usr/local/lib/node_modules/typescript/lib/lib.es2015.d.ts",
       "../../../../usr/local/lib/node_modules/typescript/lib/lib.dom.d.ts",
@@ -132,7 +100,8 @@
       "../../../../usr/local/lib/node_modules/typescript/lib/lib.es2015.proxy.d.ts",
       "../../../../usr/local/lib/node_modules/typescript/lib/lib.es2015.reflect.d.ts",
       "../../../../usr/local/lib/node_modules/typescript/lib/lib.es2015.symbol.d.ts",
-      "../../../../usr/local/lib/node_modules/typescript/lib/lib.es2015.symbol.wellknown.d.ts"
+      "../../../../usr/local/lib/node_modules/typescript/lib/lib.es2015.symbol.wellknown.d.ts",
+      "./src/app.ts"
     ]
   },
   "version": "3.7.5"

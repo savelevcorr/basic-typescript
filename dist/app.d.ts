@@ -1,3 +1,23 @@
+interface Validatable {
+    value: string | number;
+    required?: boolean;
+    minLength?: number;
+    maxLength?: number;
+    min?: number;
+    max?: number;
+}
+/**
+ * Validator
+ * @param validatable {object}
+ * @return {boolean}
+ */
+declare function validate(validatable: Validatable): boolean;
+/**
+ * AutoBing
+ * @param _
+ * @param _2
+ * @param descriptor
+ */
 declare function AutoBind(_: any, _2: string, descriptor: PropertyDescriptor): PropertyDescriptor;
 /**
  * @class
