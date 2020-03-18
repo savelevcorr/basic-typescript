@@ -75,46 +75,71 @@ function AutoBind(
     return adjDescriptor;
 }
 
-/**
- * @class
- * @classdesc Render a form to the container
- */
-class ProjectInput {
+abstract class Project {
+    element: HTMLFormElement | HTMLElement | null;
     templateElement: HTMLTemplateElement;
     hostElement: HTMLDivElement;
-    titleInputElement: HTMLInputElement;
-    descriptionInputElement: HTMLInputElement;
-    peopleInputElement: HTMLInputElement;
 
-    private element: HTMLFormElement | null;
-
-    /**
-     * @constructor
-     * @param elementId {string}
-     */
-    constructor(elementId: string) {
+    protected constructor(templateSelector: string, hostSelector: string) {
         this.element = null;
-        this.templateElement = <HTMLTemplateElement>document.querySelector('#project-input')!;
-        this.hostElement = <HTMLDivElement>document.querySelector('#app')!;
-        this.titleInputElement = <HTMLInputElement>this.getHTMLElementFromFragment().querySelector('#title')!;
-        this.descriptionInputElement = <HTMLInputElement>this.getHTMLElementFromFragment().querySelector('#description')!;
-        this.peopleInputElement = <HTMLInputElement>this.getHTMLElementFromFragment().querySelector('#people')!;
-
-        this.assignIdToElement(elementId);
-        this.configure();
-        this.attach(this.getHTMLElementFromFragment());
+        this.templateElement = <HTMLTemplateElement>document.querySelector(templateSelector)!;
+        this.hostElement = <HTMLDivElement>document.querySelector(hostSelector)!;
     }
 
     /**
      * Return HTMLElement from the stored Fragment
      * @return {HTMLFormElement}
      */
-    private getHTMLElementFromFragment(): HTMLFormElement {
+    protected getHTMLElementFromFragment(): HTMLFormElement | HTMLElement {
         if (!this.element) {
-            this.element = document.importNode(this.templateElement.content, true).firstElementChild as HTMLFormElement;
+            this.element = document.importNode(this.templateElement.content, true).firstElementChild as HTMLFormElement | HTMLElement;
         }
 
         return this.element;
+    }
+
+    /**
+     * Render the given element
+     * @param position {InsertPosition}
+     * @param element {HTMLElement}
+     */
+    protected attach(position: InsertPosition, element: HTMLElement): void {
+        this.hostElement.insertAdjacentElement(position, element);
+    }
+
+    protected assignIdToElement(id: string): void {
+        this.getHTMLElementFromFragment().id = id;
+    }
+
+    protected init(position: InsertPosition, id: string) {
+        this.assignIdToElement(id);
+        this.attach(position, this.getHTMLElementFromFragment());
+    }
+}
+
+/**
+ * @class
+ * @classdesc Render a form to the container
+ */
+class ProjectInput extends Project {
+    titleInputElement: HTMLInputElement;
+    descriptionInputElement: HTMLInputElement;
+    peopleInputElement: HTMLInputElement;
+
+    /**
+     * @constructor
+     * @param templateSelector {string}
+     * @param hostSelector {string}
+     * @param elementId {string}
+     */
+    constructor(templateSelector: string, hostSelector: string, elementId: string) {
+        super(templateSelector, hostSelector);
+        this.titleInputElement = <HTMLInputElement>this.getHTMLElementFromFragment().querySelector('#title')!;
+        this.descriptionInputElement = <HTMLInputElement>this.getHTMLElementFromFragment().querySelector('#description')!;
+        this.peopleInputElement = <HTMLInputElement>this.getHTMLElementFromFragment().querySelector('#people')!;
+
+        this.configure();
+        this.init('afterbegin', elementId);
     }
 
     private getGatheredInputs(): [string, string, number] | null {
@@ -176,18 +201,27 @@ class ProjectInput {
         this.getHTMLElementFromFragment()
             .addEventListener('submit', this.submitHandler);
     }
+}
 
-    private assignIdToElement(id: string): void {
-        this.getHTMLElementFromFragment().id = id;
+class ProjectList extends Project {
+    type: 'active' | 'finished';
+
+    constructor(templateSelector: string, hostSelector: string, type: 'active' | 'finished') {
+        super(templateSelector, hostSelector);
+
+        this.type = type;
+        this.init('beforeend', `${this.type}-projects`);
+        this.renderContent();
     }
 
-    /**
-     * Render the given element
-     * @param element {HTMLElement}
-     */
-    private attach(element: HTMLElement): void {
-        this.hostElement.insertAdjacentElement('afterbegin', element);
+    private renderContent() {
+        this.getHTMLElementFromFragment()
+            .querySelector('ul')!.id = `${this.type}-project-list`;
+        this.getHTMLElementFromFragment()
+            .querySelector('h2')!.textContent = `${this.type.toUpperCase()} PROJECTS`;
     }
 }
 
-const projectInput = new ProjectInput('user-input');
+const projectInput = new ProjectInput('#project-input', '#app', 'user-input');
+const projectList = new ProjectList('#project-list', '#app', 'active');
+const projectList2 = new ProjectList('#project-list', '#app', 'finished');

@@ -1,4 +1,17 @@
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -57,36 +70,60 @@ function AutoBind(_, _2, descriptor) {
     };
     return adjDescriptor;
 }
-/**
- * @class
- * @classdesc Render a form to the container
- */
-var ProjectInput = /** @class */ (function () {
-    /**
-     * @constructor
-     * @param elementId {string}
-     */
-    function ProjectInput(elementId) {
+var Project = /** @class */ (function () {
+    function Project(templateSelector, hostSelector) {
         this.element = null;
-        this.templateElement = document.querySelector('#project-input');
-        this.hostElement = document.querySelector('#app');
-        this.titleInputElement = this.getHTMLElementFromFragment().querySelector('#title');
-        this.descriptionInputElement = this.getHTMLElementFromFragment().querySelector('#description');
-        this.peopleInputElement = this.getHTMLElementFromFragment().querySelector('#people');
-        this.assignIdToElement(elementId);
-        this.configure();
-        this.attach(this.getHTMLElementFromFragment());
+        this.templateElement = document.querySelector(templateSelector);
+        this.hostElement = document.querySelector(hostSelector);
     }
     /**
      * Return HTMLElement from the stored Fragment
      * @return {HTMLFormElement}
      */
-    ProjectInput.prototype.getHTMLElementFromFragment = function () {
+    Project.prototype.getHTMLElementFromFragment = function () {
         if (!this.element) {
             this.element = document.importNode(this.templateElement.content, true).firstElementChild;
         }
         return this.element;
     };
+    /**
+     * Render the given element
+     * @param position {InsertPosition}
+     * @param element {HTMLElement}
+     */
+    Project.prototype.attach = function (position, element) {
+        this.hostElement.insertAdjacentElement(position, element);
+    };
+    Project.prototype.assignIdToElement = function (id) {
+        this.getHTMLElementFromFragment().id = id;
+    };
+    Project.prototype.init = function (position, id) {
+        this.assignIdToElement(id);
+        this.attach(position, this.getHTMLElementFromFragment());
+    };
+    return Project;
+}());
+/**
+ * @class
+ * @classdesc Render a form to the container
+ */
+var ProjectInput = /** @class */ (function (_super) {
+    __extends(ProjectInput, _super);
+    /**
+     * @constructor
+     * @param templateSelector {string}
+     * @param hostSelector {string}
+     * @param elementId {string}
+     */
+    function ProjectInput(templateSelector, hostSelector, elementId) {
+        var _this = _super.call(this, templateSelector, hostSelector) || this;
+        _this.titleInputElement = _this.getHTMLElementFromFragment().querySelector('#title');
+        _this.descriptionInputElement = _this.getHTMLElementFromFragment().querySelector('#description');
+        _this.peopleInputElement = _this.getHTMLElementFromFragment().querySelector('#people');
+        _this.configure();
+        _this.init('afterbegin', elementId);
+        return _this;
+    }
     ProjectInput.prototype.getGatheredInputs = function () {
         var enteredTitle = this.titleInputElement.value;
         var enteredDescription = this.descriptionInputElement.value;
@@ -135,19 +172,28 @@ var ProjectInput = /** @class */ (function () {
         this.getHTMLElementFromFragment()
             .addEventListener('submit', this.submitHandler);
     };
-    ProjectInput.prototype.assignIdToElement = function (id) {
-        this.getHTMLElementFromFragment().id = id;
-    };
-    /**
-     * Render the given element
-     * @param element {HTMLElement}
-     */
-    ProjectInput.prototype.attach = function (element) {
-        this.hostElement.insertAdjacentElement('afterbegin', element);
-    };
     __decorate([
         AutoBind
     ], ProjectInput.prototype, "submitHandler", null);
     return ProjectInput;
-}());
-var projectInput = new ProjectInput('user-input');
+}(Project));
+var ProjectList = /** @class */ (function (_super) {
+    __extends(ProjectList, _super);
+    function ProjectList(templateSelector, hostSelector, type) {
+        var _this = _super.call(this, templateSelector, hostSelector) || this;
+        _this.type = type;
+        _this.init('beforeend', _this.type + "-projects");
+        _this.renderContent();
+        return _this;
+    }
+    ProjectList.prototype.renderContent = function () {
+        this.getHTMLElementFromFragment()
+            .querySelector('ul').id = this.type + "-project-list";
+        this.getHTMLElementFromFragment()
+            .querySelector('h2').textContent = this.type.toUpperCase() + " PROJECTS";
+    };
+    return ProjectList;
+}(Project));
+var projectInput = new ProjectInput('#project-input', '#app', 'user-input');
+var projectList = new ProjectList('#project-list', '#app', 'active');
+var projectList2 = new ProjectList('#project-list', '#app', 'finished');
