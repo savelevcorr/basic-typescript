@@ -7,6 +7,13 @@ interface Validatable {
     max?: number
 }
 
+type ProjectItem = {
+    id: string,
+    title: string,
+    description: string,
+    numberOfPeople: number
+}
+
 /**
  * Validator
  * @param validatable {object}
@@ -73,6 +80,48 @@ function AutoBind(
     };
 
     return adjDescriptor;
+}
+
+class ProjectState {
+    private listeners: Function[] = [];
+    private projects: ProjectItem[] = [];
+    private static instance: ProjectState;
+
+    private constructor() {}
+
+    static getInstance() {
+        if (!this.instance) {
+            this.instance = new ProjectState();
+        }
+
+        return this.instance;
+    }
+
+    private callAllListeners() {
+        for (let listenerFn of this.listeners) {
+            listenerFn(this.getProjects())
+        }
+    }
+
+    private getProjects() {
+        return this.projects.slice();
+    }
+
+    addListener(listenerFn: Function) {
+        this.listeners.push(listenerFn);
+    }
+
+    addProject(title: string, description: string, numberOfPeople: number) {
+        const newProject: ProjectItem = {
+            id: Math.random().toString(),
+            title,
+            description,
+            numberOfPeople
+        };
+
+        this.projects.push(newProject);
+        this.callAllListeners();
+    }
 }
 
 abstract class Project {
@@ -190,7 +239,9 @@ class ProjectInput extends Project {
         if (userInput) {
             let [title, desc, people] = userInput;
 
-            console.log(title, desc, people);
+            ProjectState.getInstance()
+                .addProject(title, desc, people);
+
             this.clearInputs();
         }
 
@@ -205,18 +256,40 @@ class ProjectInput extends Project {
 
 class ProjectList extends Project {
     type: 'active' | 'finished';
+    listId: string;
 
     constructor(templateSelector: string, hostSelector: string, type: 'active' | 'finished') {
         super(templateSelector, hostSelector);
 
         this.type = type;
+        this.listId = `${this.type}-project-list`;
+
+        ProjectState.getInstance()
+            .addListener((projects: ProjectItem[]) => {
+                this.renderProjects(projects);
+            });
         this.init('beforeend', `${this.type}-projects`);
         this.renderContent();
     }
 
+    private renderProjects(projects: ProjectItem[]) {
+        for (let project of projects) {
+            this.getHTMLElementFromFragment()
+                .querySelector('ul')!.appendChild(this.createListItem(project.title))
+        }
+    }
+
+    private createListItem(title: string): HTMLLIElement {
+        const listItem = document.createElement('li');
+
+        listItem.textContent = title;
+
+        return listItem;
+    }
+
     private renderContent() {
         this.getHTMLElementFromFragment()
-            .querySelector('ul')!.id = `${this.type}-project-list`;
+            .querySelector('ul')!.id = this.listId;
         this.getHTMLElementFromFragment()
             .querySelector('h2')!.textContent = `${this.type.toUpperCase()} PROJECTS`;
     }

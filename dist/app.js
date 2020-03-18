@@ -70,6 +70,41 @@ function AutoBind(_, _2, descriptor) {
     };
     return adjDescriptor;
 }
+var ProjectState = /** @class */ (function () {
+    function ProjectState() {
+        this.listeners = [];
+        this.projects = [];
+    }
+    ProjectState.getInstance = function () {
+        if (!this.instance) {
+            this.instance = new ProjectState();
+        }
+        return this.instance;
+    };
+    ProjectState.prototype.callAllListeners = function () {
+        for (var _i = 0, _a = this.listeners; _i < _a.length; _i++) {
+            var listenerFn = _a[_i];
+            listenerFn(this.getProjects());
+        }
+    };
+    ProjectState.prototype.getProjects = function () {
+        return this.projects.slice();
+    };
+    ProjectState.prototype.addListener = function (listenerFn) {
+        this.listeners.push(listenerFn);
+    };
+    ProjectState.prototype.addProject = function (title, description, numberOfPeople) {
+        var newProject = {
+            id: Math.random().toString(),
+            title: title,
+            description: description,
+            numberOfPeople: numberOfPeople
+        };
+        this.projects.push(newProject);
+        this.callAllListeners();
+    };
+    return ProjectState;
+}());
 var Project = /** @class */ (function () {
     function Project(templateSelector, hostSelector) {
         this.element = null;
@@ -163,7 +198,8 @@ var ProjectInput = /** @class */ (function (_super) {
         var userInput = this.getGatheredInputs();
         if (userInput) {
             var title = userInput[0], desc = userInput[1], people = userInput[2];
-            console.log(title, desc, people);
+            ProjectState.getInstance()
+                .addProject(title, desc, people);
             this.clearInputs();
         }
         event.preventDefault();
@@ -182,13 +218,30 @@ var ProjectList = /** @class */ (function (_super) {
     function ProjectList(templateSelector, hostSelector, type) {
         var _this = _super.call(this, templateSelector, hostSelector) || this;
         _this.type = type;
+        _this.listId = _this.type + "-project-list";
+        ProjectState.getInstance()
+            .addListener(function (projects) {
+            _this.renderProjects(projects);
+        });
         _this.init('beforeend', _this.type + "-projects");
         _this.renderContent();
         return _this;
     }
+    ProjectList.prototype.renderProjects = function (projects) {
+        for (var _i = 0, projects_1 = projects; _i < projects_1.length; _i++) {
+            var project = projects_1[_i];
+            this.getHTMLElementFromFragment()
+                .querySelector('ul').appendChild(this.createListItem(project.title));
+        }
+    };
+    ProjectList.prototype.createListItem = function (title) {
+        var listItem = document.createElement('li');
+        listItem.textContent = title;
+        return listItem;
+    };
     ProjectList.prototype.renderContent = function () {
         this.getHTMLElementFromFragment()
-            .querySelector('ul').id = this.type + "-project-list";
+            .querySelector('ul').id = this.listId;
         this.getHTMLElementFromFragment()
             .querySelector('h2').textContent = this.type.toUpperCase() + " PROJECTS";
     };

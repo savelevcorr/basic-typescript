@@ -6,6 +6,12 @@ interface Validatable {
     min?: number;
     max?: number;
 }
+declare type ProjectItem = {
+    id: string;
+    title: string;
+    description: string;
+    numberOfPeople: number;
+};
 /**
  * Validator
  * @param validatable {object}
@@ -19,6 +25,17 @@ declare function validate(validatable: Validatable): boolean;
  * @param descriptor
  */
 declare function AutoBind(_: any, _2: string, descriptor: PropertyDescriptor): PropertyDescriptor;
+declare class ProjectState {
+    private listeners;
+    private projects;
+    private static instance;
+    private constructor();
+    static getInstance(): ProjectState;
+    private callAllListeners;
+    private getProjects;
+    addListener(listenerFn: Function): void;
+    addProject(title: string, description: string, numberOfPeople: number): void;
+}
 declare abstract class Project {
     element: HTMLFormElement | HTMLElement | null;
     templateElement: HTMLTemplateElement;
@@ -60,7 +77,10 @@ declare class ProjectInput extends Project {
 }
 declare class ProjectList extends Project {
     type: 'active' | 'finished';
+    listId: string;
     constructor(templateSelector: string, hostSelector: string, type: 'active' | 'finished');
+    private renderProjects;
+    private createListItem;
     private renderContent;
 }
 declare const projectInput: ProjectInput;
