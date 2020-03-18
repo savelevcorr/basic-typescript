@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "tsc -w app.ts & lite-server",
+    "start": "tsc -w & lite-server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
