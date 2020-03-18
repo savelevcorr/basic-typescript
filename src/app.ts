@@ -39,8 +39,6 @@ class ProjectInput {
         this.descriptionInputElement = <HTMLInputElement>this.getHTMLElementFromFragment().querySelector('#description')!;
         this.peopleInputElement = <HTMLInputElement>this.getHTMLElementFromFragment().querySelector('#people')!;
 
-        console.log(this.titleInputElement);
-
         this.assignIdToElement(elementId);
         this.configure();
         this.attach(this.getHTMLElementFromFragment());
@@ -58,11 +56,42 @@ class ProjectInput {
         return this.element;
     }
 
+    private getGatheredInputs(): [string, string, number] | null {
+        const enteredTitle = this.titleInputElement.value;
+        const enteredDescription = this.descriptionInputElement.value;
+        const enteredPeople = this.peopleInputElement.value;
+        let result: [string, string, number] | null = null;
+
+        if (
+            enteredTitle.trim().length === 0 ||
+            enteredDescription.trim().length === 0 ||
+            enteredDescription.trim().length === 0
+        ) {
+            alert('Invalid input value');
+        } else {
+            result = [enteredTitle, enteredDescription, +enteredPeople];
+        }
+
+        return result;
+    }
+
+    private clearInputs(): void {
+        this.titleInputElement.value = '';
+        this.descriptionInputElement.value = '';
+        this.peopleInputElement.value = '';
+    }
+
     @AutoBind
     private submitHandler(event: Event): void {
-        event.preventDefault();
+        const userInput = this.getGatheredInputs();
 
-        console.log(this.titleInputElement.value);
+        if (userInput) {
+            let [title, desc, people] = userInput;
+
+            this.clearInputs();
+        }
+
+        event.preventDefault();
     }
 
     private configure() {

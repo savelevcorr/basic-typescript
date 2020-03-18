@@ -31,7 +31,6 @@ var ProjectInput = /** @class */ (function () {
         this.titleInputElement = this.getHTMLElementFromFragment().querySelector('#title');
         this.descriptionInputElement = this.getHTMLElementFromFragment().querySelector('#description');
         this.peopleInputElement = this.getHTMLElementFromFragment().querySelector('#people');
-        console.log(this.titleInputElement);
         this.assignIdToElement(elementId);
         this.configure();
         this.attach(this.getHTMLElementFromFragment());
@@ -46,9 +45,33 @@ var ProjectInput = /** @class */ (function () {
         }
         return this.element;
     };
+    ProjectInput.prototype.getGatheredInputs = function () {
+        var enteredTitle = this.titleInputElement.value;
+        var enteredDescription = this.descriptionInputElement.value;
+        var enteredPeople = this.peopleInputElement.value;
+        var result = null;
+        if (enteredTitle.trim().length === 0 ||
+            enteredDescription.trim().length === 0 ||
+            enteredDescription.trim().length === 0) {
+            alert('Invalid input value');
+        }
+        else {
+            result = [enteredTitle, enteredDescription, +enteredPeople];
+        }
+        return result;
+    };
+    ProjectInput.prototype.clearInputs = function () {
+        this.titleInputElement.value = '';
+        this.descriptionInputElement.value = '';
+        this.peopleInputElement.value = '';
+    };
     ProjectInput.prototype.submitHandler = function (event) {
+        var userInput = this.getGatheredInputs();
+        if (userInput) {
+            var title = userInput[0], desc = userInput[1], people = userInput[2];
+            this.clearInputs();
+        }
         event.preventDefault();
-        console.log(this.titleInputElement.value);
     };
     ProjectInput.prototype.configure = function () {
         this.getHTMLElementFromFragment()

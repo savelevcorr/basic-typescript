@@ -20,6 +20,8 @@ declare class ProjectInput {
      * @return {HTMLFormElement}
      */
     private getHTMLElementFromFragment;
+    private getGatheredInputs;
+    private clearInputs;
     private submitHandler;
     private configure;
     private assignIdToElement;

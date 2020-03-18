@@ -58,8 +58,8 @@
         "signature": "3e0a459888f32b42138d5a39f706ff2d55d500ab1031e0988b5568b0f67c2303"
       },
       "./src/app.ts": {
-        "version": "ae4ad7242040910877af4de6df4f8355720ef13a947e53af1cc33c7c4ea9e3c3",
-        "signature": "103425167073bef71946304bd3e7800ac1666ba7790d76a4e0e69a0635b9ce95"
+        "version": "62a8723948defa0ada56531409d521e9ccee30ff428f1456e9feeefef968775e",
+        "signature": "68d6238ceaad1432f49defece75dd7cbcb681771c35d181e27d2aec93cc7e7bb"
       }
     },
     "options": {
@@ -87,7 +87,38 @@
     "referencedMap": {},
     "exportedModulesMap": {},
     "semanticDiagnosticsPerFile": [
-      "./src/app.ts",
+      [
+        "./src/app.ts",
+        [
+          {
+            "file": "./src/app.ts",
+            "start": 2799,
+            "length": 5,
+            "messageText": "'title' is declared but its value is never read.",
+            "category": 1,
+            "code": 6133,
+            "reportsUnnecessary": true
+          },
+          {
+            "file": "./src/app.ts",
+            "start": 2806,
+            "length": 4,
+            "messageText": "'desc' is declared but its value is never read.",
+            "category": 1,
+            "code": 6133,
+            "reportsUnnecessary": true
+          },
+          {
+            "file": "./src/app.ts",
+            "start": 2812,
+            "length": 6,
+            "messageText": "'people' is declared but its value is never read.",
+            "category": 1,
+            "code": 6133,
+            "reportsUnnecessary": true
+          }
+        ]
+      ],
       "../../../../usr/local/lib/node_modules/typescript/lib/lib.es5.d.ts",
       "../../../../usr/local/lib/node_modules/typescript/lib/lib.es2015.d.ts",
       "../../../../usr/local/lib/node_modules/typescript/lib/lib.dom.d.ts",
