@@ -1,3 +1,4 @@
+declare function AutoBind(_: any, _2: string, descriptor: PropertyDescriptor): PropertyDescriptor;
 /**
  * @class
  * @classdesc Render a form to the container

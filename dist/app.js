@@ -1,4 +1,20 @@
 "use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+function AutoBind(_, _2, descriptor) {
+    var originalMethod = descriptor.value;
+    var adjDescriptor = {
+        configurable: true,
+        get: function () {
+            return originalMethod.bind(this);
+        }
+    };
+    return adjDescriptor;
+}
 /**
  * @class
  * @classdesc Render a form to the container
@@ -36,7 +52,7 @@ var ProjectInput = /** @class */ (function () {
     };
     ProjectInput.prototype.configure = function () {
         this.getHTMLElementFromFragment()
-            .addEventListener('submit', this.submitHandler.bind(this));
+            .addEventListener('submit', this.submitHandler);
     };
     ProjectInput.prototype.assignIdToElement = function (id) {
         this.getHTMLElementFromFragment().id = id;
@@ -48,6 +64,9 @@ var ProjectInput = /** @class */ (function () {
     ProjectInput.prototype.attach = function (element) {
         this.hostElement.insertAdjacentElement('afterbegin', element);
     };
+    __decorate([
+        AutoBind
+    ], ProjectInput.prototype, "submitHandler", null);
     return ProjectInput;
 }());
 var projectInput = new ProjectInput('user-input');

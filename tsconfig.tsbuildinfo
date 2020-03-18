@@ -58,8 +58,8 @@
         "signature": "3e0a459888f32b42138d5a39f706ff2d55d500ab1031e0988b5568b0f67c2303"
       },
       "./src/app.ts": {
-        "version": "9b06fa7704b25042f747a37b9ab09c2c1690a5b6ac65685b9d2c46b97f9cb5f3",
-        "signature": "b5355df2efe6406e13a64779a39122f86e096acc9ed73c02a7c1a663c135f9d4"
+        "version": "ae4ad7242040910877af4de6df4f8355720ef13a947e53af1cc33c7c4ea9e3c3",
+        "signature": "103425167073bef71946304bd3e7800ac1666ba7790d76a4e0e69a0635b9ce95"
       }
     },
     "options": {
@@ -87,6 +87,7 @@
     "referencedMap": {},
     "exportedModulesMap": {},
     "semanticDiagnosticsPerFile": [
+      "./src/app.ts",
       "../../../../usr/local/lib/node_modules/typescript/lib/lib.es5.d.ts",
       "../../../../usr/local/lib/node_modules/typescript/lib/lib.es2015.d.ts",
       "../../../../usr/local/lib/node_modules/typescript/lib/lib.dom.d.ts",
@@ -100,8 +101,7 @@
       "../../../../usr/local/lib/node_modules/typescript/lib/lib.es2015.proxy.d.ts",
       "../../../../usr/local/lib/node_modules/typescript/lib/lib.es2015.reflect.d.ts",
       "../../../../usr/local/lib/node_modules/typescript/lib/lib.es2015.symbol.d.ts",
-      "../../../../usr/local/lib/node_modules/typescript/lib/lib.es2015.symbol.wellknown.d.ts",
-      "./src/app.ts"
+      "../../../../usr/local/lib/node_modules/typescript/lib/lib.es2015.symbol.wellknown.d.ts"
     ]
   },
   "version": "3.7.5"
