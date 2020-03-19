@@ -1,4 +1,13 @@
-interface Validatable {
+interface IDraggable {
+    dragStartHandler(event: DragEvent): void;
+    dragEndHandler(event: DragEvent): void;
+}
+interface IDropTarget {
+    dragOverHandler(event: DragEvent): void;
+    dropHandler(event: DragEvent): void;
+    dragLeaveHandler(event: DragEvent): void;
+}
+interface IValidatable {
     value: string | number;
     required?: boolean;
     minLength?: number;
@@ -16,7 +25,7 @@ declare type Listener<T> = (items: T[]) => void;
  * @param validatable {object}
  * @return {boolean}
  */
-declare function validate(validatable: Validatable): boolean;
+declare function validate(validatable: IValidatable): boolean;
 /**
  * AutoBing
  * @param _
@@ -64,11 +73,14 @@ declare abstract class Component {
     protected assignIdToElement(id: string): void;
     protected init(position: InsertPosition, id: string): void;
 }
-declare class ListItem extends Component {
+declare class ListItem extends Component implements IDraggable {
     project: Project;
     get persons(): string;
     constructor(templateSelector: string, hostSelector: string, project: Project);
     private fillListItem;
+    configure(): void;
+    dragStartHandler(event: DragEvent): void;
+    dragEndHandler(_: DragEvent): void;
 }
 /**
  * @class
@@ -90,13 +102,17 @@ declare class ProjectInput extends Component {
     private submitHandler;
     private configure;
 }
-declare class ProjectList extends Component {
+declare class ProjectList extends Component implements IDropTarget {
     type: 'active' | 'finished';
     listId: string;
     constructor(templateSelector: string, hostSelector: string, type: 'active' | 'finished');
     private filterProjectsByStatus;
     private renderProjects;
     private renderContent;
+    configure(): void;
+    dragOverHandler(_: DragEvent): void;
+    dropHandler(_: DragEvent): void;
+    dragLeaveHandler(_: DragEvent): void;
 }
 declare const projectInput: ProjectInput;
 declare const projectList: ProjectList;

@@ -163,6 +163,7 @@ var ListItem = /** @class */ (function (_super) {
         var _this = _super.call(this, templateSelector, hostSelector) || this;
         _this.project = project;
         _this.fillListItem(_this.project.title, _this.project.description, _this.persons);
+        _this.configure();
         _this.init('beforeend', project.id);
         return _this;
     }
@@ -191,6 +192,21 @@ var ListItem = /** @class */ (function (_super) {
             .querySelector('p')
             .textContent = "Description: " + description;
     };
+    ListItem.prototype.configure = function () {
+        this.getHTMLElementFromFragment()
+            .addEventListener('dragstart', this.dragStartHandler);
+        this.getHTMLElementFromFragment()
+            .addEventListener('dragend', this.dragEndHandler);
+    };
+    ListItem.prototype.dragStartHandler = function (event) {
+        console.log(event);
+    };
+    ListItem.prototype.dragEndHandler = function (_) {
+        console.log('DragEnd');
+    };
+    __decorate([
+        AutoBind
+    ], ListItem.prototype, "dragStartHandler", null);
     return ListItem;
 }(Component));
 /**
@@ -278,8 +294,9 @@ var ProjectList = /** @class */ (function (_super) {
             .addListener(function (projects) {
             _this.renderProjects(_this.filterProjectsByStatus(projects));
         });
-        _this.init('beforeend', _this.type + "-projects");
+        _this.configure();
         _this.renderContent();
+        _this.init('beforeend', _this.type + "-projects");
         return _this;
     }
     ProjectList.prototype.filterProjectsByStatus = function (projects) {
@@ -313,6 +330,34 @@ var ProjectList = /** @class */ (function (_super) {
         this.getHTMLElementFromFragment()
             .querySelector('h2').textContent = this.type.toUpperCase() + " PROJECTS";
     };
+    ProjectList.prototype.configure = function () {
+        this.getHTMLElementFromFragment()
+            .addEventListener('dragover', this.dragOverHandler);
+        this.getHTMLElementFromFragment()
+            .addEventListener('drop', this.dropHandler);
+        this.getHTMLElementFromFragment()
+            .addEventListener('dragleave', this.dragLeaveHandler);
+    };
+    ProjectList.prototype.dragOverHandler = function (_) {
+        this.getHTMLElementFromFragment()
+            .querySelector('ul')
+            .classList
+            .add('droppable');
+    };
+    ProjectList.prototype.dropHandler = function (_) {
+    };
+    ProjectList.prototype.dragLeaveHandler = function (_) {
+        this.getHTMLElementFromFragment()
+            .querySelector('ul')
+            .classList
+            .remove('droppable');
+    };
+    __decorate([
+        AutoBind
+    ], ProjectList.prototype, "dragOverHandler", null);
+    __decorate([
+        AutoBind
+    ], ProjectList.prototype, "dragLeaveHandler", null);
     return ProjectList;
 }(Component));
 var projectInput = new ProjectInput('#project-input', '#app', 'user-input');

@@ -1,4 +1,14 @@
-interface Validatable {
+interface IDraggable {
+    dragStartHandler(event: DragEvent): void;
+    dragEndHandler(event: DragEvent): void;
+}
+interface IDropTarget {
+    dragOverHandler(event: DragEvent): void;
+    dropHandler(event: DragEvent): void;
+    dragLeaveHandler(event: DragEvent): void;
+}
+
+interface IValidatable {
     value: string | number;
     required?: boolean;
     minLength?: number,
@@ -16,7 +26,7 @@ type Listener<T> = (items: T[]) => void;
  * @param validatable {object}
  * @return {boolean}
  */
-function validate(validatable: Validatable) {
+function validate(validatable: IValidatable) {
     const isExists = function (entity: null | undefined | number): boolean {
         return (
             entity !== null &&
@@ -181,7 +191,8 @@ abstract class Component {
     }
 }
 
-class ListItem extends Component {
+
+class ListItem extends Component implements IDraggable {
     project: Project;
 
     get persons(): string {
@@ -201,6 +212,7 @@ class ListItem extends Component {
 
         this.project = project;
         this.fillListItem(this.project.title, this.project.description, this.persons);
+        this.configure();
         this.init('beforeend', project.id);
     }
 
@@ -216,6 +228,22 @@ class ListItem extends Component {
         this.getHTMLElementFromFragment()
             .querySelector('p')!
             .textContent = `Description: ${description}`;
+    }
+
+    configure() {
+        this.getHTMLElementFromFragment()
+            .addEventListener('dragstart', <EventListener>this.dragStartHandler);
+        this.getHTMLElementFromFragment()
+            .addEventListener('dragend', <EventListener>this.dragEndHandler);
+    }
+
+    @AutoBind
+    dragStartHandler(event: DragEvent): void {
+        console.log(event)
+    }
+
+    dragEndHandler(_: DragEvent): void {
+        console.log('DragEnd');
     }
 }
 
@@ -248,16 +276,16 @@ class ProjectInput extends Component {
         const enteredTitle = this.titleInputElement.value;
         const enteredDescription = this.descriptionInputElement.value;
         const enteredPeople = this.peopleInputElement.value;
-        const titleValidatable: Validatable = {
+        const titleValidatable: IValidatable = {
             value: enteredTitle,
             required: true
         };
-        const descriptionValidatable: Validatable = {
+        const descriptionValidatable: IValidatable = {
             value: enteredDescription,
             required: true,
             minLength: 5
         };
-        const peopleValidatable: Validatable = {
+        const peopleValidatable: IValidatable = {
             value: enteredPeople,
             required: true,
             min: 1
@@ -307,7 +335,7 @@ class ProjectInput extends Component {
     }
 }
 
-class ProjectList extends Component {
+class ProjectList extends Component implements IDropTarget{
     type: 'active' | 'finished';
     listId: string;
 
@@ -326,8 +354,9 @@ class ProjectList extends Component {
                 this.renderProjects(this.filterProjectsByStatus(projects));
             });
 
-        this.init('beforeend', `${this.type}-projects`);
+        this.configure();
         this.renderContent();
+        this.init('beforeend', `${this.type}-projects`);
     }
 
     private filterProjectsByStatus(projects: Project[]): Project[] {
@@ -365,6 +394,34 @@ class ProjectList extends Component {
             .querySelector('ul')!.id = this.listId;
         this.getHTMLElementFromFragment()
             .querySelector('h2')!.textContent = `${this.type.toUpperCase()} PROJECTS`;
+    }
+
+    configure() {
+        this.getHTMLElementFromFragment()
+            .addEventListener('dragover', <EventListener>this.dragOverHandler);
+        this.getHTMLElementFromFragment()
+            .addEventListener('drop', <EventListener>this.dropHandler);
+        this.getHTMLElementFromFragment()
+            .addEventListener('dragleave', <EventListener>this.dragLeaveHandler);
+    }
+
+    @AutoBind
+    dragOverHandler(_: DragEvent): void {
+        this.getHTMLElementFromFragment()
+            .querySelector('ul')!
+            .classList
+            .add('droppable');
+    }
+
+    dropHandler(_: DragEvent): void {
+    }
+
+    @AutoBind
+    dragLeaveHandler(_: DragEvent): void {
+        this.getHTMLElementFromFragment()
+            .querySelector('ul')!
+            .classList
+            .remove('droppable');
     }
 }
 
