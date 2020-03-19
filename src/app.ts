@@ -9,7 +9,7 @@ interface Validatable {
 
 enum ProjectStatus {ACTIVE, FINISHED}
 
-type Listener = (items: ProjectItem[]) => void;
+type Listener<T> = (items: T[]) => void;
 
 class ProjectItem {
     constructor(
@@ -90,12 +90,20 @@ function AutoBind(
     return adjDescriptor;
 }
 
-class ProjectState {
-    private listeners: Listener[] = [];
+class State<T> {
+    protected listeners: Listener<T>[] = [];
+
+    addListener(listenerFn: Listener<T>) {
+        this.listeners.push(listenerFn);
+    }
+}
+
+class ProjectState extends State<ProjectItem> {
     private projects: ProjectItem[] = [];
     private static instance: ProjectState;
 
     private constructor() {
+        super()
     }
 
     static getInstance() {
@@ -114,10 +122,6 @@ class ProjectState {
 
     private getProjects() {
         return this.projects.slice();
-    }
-
-    addListener(listenerFn: Listener) {
-        this.listeners.push(listenerFn);
     }
 
     addProject(title: string, description: string, people: number) {

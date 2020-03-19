@@ -10,7 +10,7 @@ declare enum ProjectStatus {
     ACTIVE = 0,
     FINISHED = 1
 }
-declare type Listener = (items: ProjectItem[]) => void;
+declare type Listener<T> = (items: T[]) => void;
 declare class ProjectItem {
     id: string;
     title: string;
@@ -32,15 +32,17 @@ declare function validate(validatable: Validatable): boolean;
  * @param descriptor
  */
 declare function AutoBind(_: any, _2: string, descriptor: PropertyDescriptor): PropertyDescriptor;
-declare class ProjectState {
-    private listeners;
+declare class State<T> {
+    protected listeners: Listener<T>[];
+    addListener(listenerFn: Listener<T>): void;
+}
+declare class ProjectState extends State<ProjectItem> {
     private projects;
     private static instance;
     private constructor();
     static getInstance(): ProjectState;
     private callAllListeners;
     private getProjects;
-    addListener(listenerFn: Listener): void;
     addProject(title: string, description: string, people: number): void;
 }
 declare abstract class Project {

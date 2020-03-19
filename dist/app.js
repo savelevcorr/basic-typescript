@@ -85,10 +85,21 @@ function AutoBind(_, _2, descriptor) {
     };
     return adjDescriptor;
 }
-var ProjectState = /** @class */ (function () {
-    function ProjectState() {
+var State = /** @class */ (function () {
+    function State() {
         this.listeners = [];
-        this.projects = [];
+    }
+    State.prototype.addListener = function (listenerFn) {
+        this.listeners.push(listenerFn);
+    };
+    return State;
+}());
+var ProjectState = /** @class */ (function (_super) {
+    __extends(ProjectState, _super);
+    function ProjectState() {
+        var _this = _super.call(this) || this;
+        _this.projects = [];
+        return _this;
     }
     ProjectState.getInstance = function () {
         if (!this.instance) {
@@ -105,16 +116,13 @@ var ProjectState = /** @class */ (function () {
     ProjectState.prototype.getProjects = function () {
         return this.projects.slice();
     };
-    ProjectState.prototype.addListener = function (listenerFn) {
-        this.listeners.push(listenerFn);
-    };
     ProjectState.prototype.addProject = function (title, description, people) {
         var newProject = new ProjectItem(Math.random().toString(), title, description, people, ProjectStatus.ACTIVE);
         this.projects.push(newProject);
         this.callAllListeners();
     };
     return ProjectState;
-}());
+}(State));
 var Project = /** @class */ (function () {
     function Project(templateSelector, hostSelector) {
         this.element = null;
