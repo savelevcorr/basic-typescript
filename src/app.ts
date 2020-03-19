@@ -18,7 +18,7 @@ class ProjectItem {
         public description: string,
         public people: number,
         public status: ProjectStatus
-        ) {
+    ) {
     }
 }
 
@@ -95,7 +95,8 @@ class ProjectState {
     private projects: ProjectItem[] = [];
     private static instance: ProjectState;
 
-    private constructor() {}
+    private constructor() {
+    }
 
     static getInstance() {
         if (!this.instance) {
@@ -267,7 +268,11 @@ class ProjectList extends Project {
     type: 'active' | 'finished';
     listId: string;
 
-    constructor(templateSelector: string, hostSelector: string, type: 'active' | 'finished') {
+    constructor(
+        templateSelector: string,
+        hostSelector: string,
+        type: 'active' | 'finished'
+    ) {
         super(templateSelector, hostSelector);
 
         this.type = type;
@@ -275,17 +280,42 @@ class ProjectList extends Project {
 
         ProjectState.getInstance()
             .addListener((projects: ProjectItem[]) => {
-                this.renderProjects(projects);
+                this.renderProjects(this.filterProjectsByStatus(projects));
             });
+
         this.init('beforeend', `${this.type}-projects`);
         this.renderContent();
     }
 
+    private filterProjectsByStatus(projects: ProjectItem[]): ProjectItem[] {
+        return projects.filter(item => {
+            let result: boolean;
+
+            switch (this.type) {
+                case "active":
+                    result = item.status === ProjectStatus.ACTIVE;
+                    break;
+
+                case "finished":
+                    result = item.status === ProjectStatus.FINISHED;
+                    break;
+
+                default:
+                    result = false;
+            }
+
+            return result;
+        });
+    }
+
     private renderProjects(projects: ProjectItem[]) {
+        const list = this.getHTMLElementFromFragment()
+            .querySelector('ul')!;
+
+        list.innerHTML = '';
+
         for (let project of projects) {
-            this.getHTMLElementFromFragment()
-                .querySelector('ul')!
-                .appendChild(this.createListItem(project.title))
+            list.appendChild(this.createListItem(project.title))
         }
     }
 

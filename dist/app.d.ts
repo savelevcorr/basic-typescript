@@ -86,6 +86,7 @@ declare class ProjectList extends Project {
     type: 'active' | 'finished';
     listId: string;
     constructor(templateSelector: string, hostSelector: string, type: 'active' | 'finished');
+    private filterProjectsByStatus;
     private renderProjects;
     private createListItem;
     private renderContent;

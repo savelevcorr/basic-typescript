@@ -231,18 +231,36 @@ var ProjectList = /** @class */ (function (_super) {
         _this.listId = _this.type + "-project-list";
         ProjectState.getInstance()
             .addListener(function (projects) {
-            _this.renderProjects(projects);
+            _this.renderProjects(_this.filterProjectsByStatus(projects));
         });
         _this.init('beforeend', _this.type + "-projects");
         _this.renderContent();
         return _this;
     }
+    ProjectList.prototype.filterProjectsByStatus = function (projects) {
+        var _this = this;
+        return projects.filter(function (item) {
+            var result;
+            switch (_this.type) {
+                case "active":
+                    result = item.status === ProjectStatus.ACTIVE;
+                    break;
+                case "finished":
+                    result = item.status === ProjectStatus.FINISHED;
+                    break;
+                default:
+                    result = false;
+            }
+            return result;
+        });
+    };
     ProjectList.prototype.renderProjects = function (projects) {
+        var list = this.getHTMLElementFromFragment()
+            .querySelector('ul');
+        list.innerHTML = '';
         for (var _i = 0, projects_1 = projects; _i < projects_1.length; _i++) {
             var project = projects_1[_i];
-            this.getHTMLElementFromFragment()
-                .querySelector('ul')
-                .appendChild(this.createListItem(project.title));
+            list.appendChild(this.createListItem(project.title));
         }
     };
     ProjectList.prototype.createListItem = function (title) {
