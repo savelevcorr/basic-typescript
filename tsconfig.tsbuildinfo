@@ -58,8 +58,8 @@
         "signature": "3e0a459888f32b42138d5a39f706ff2d55d500ab1031e0988b5568b0f67c2303"
       },
       "./src/app.ts": {
-        "version": "8deba70bb819fe3046d7b64c970770d9e862d6870dcf719c9d26ad71ad6a6aa4",
-        "signature": "2b25e5efee959e18a938aa0f5d2fe877d5fd18036eaeb6c2d713a20bbb58682b"
+        "version": "bac957a0bda03b77b897cae3509b6e77f719abc7b481c8a279b5d76e6d274893",
+        "signature": "bc1bf4744523083f20fb12a33b411e377b42f43d8e9c2c4cde184eeddccdbb4b"
       }
     },
     "options": {

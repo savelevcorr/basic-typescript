@@ -53,6 +53,7 @@ declare class ProjectState extends State<Project> {
     private callAllListeners;
     private getProjects;
     addProject(title: string, description: string, people: number): void;
+    moveProject(projectId: string, newStatus: ProjectStatus): void;
 }
 declare abstract class Component {
     element: HTMLFormElement | HTMLElement | null;
@@ -110,8 +111,8 @@ declare class ProjectList extends Component implements IDropTarget {
     private renderProjects;
     private renderContent;
     configure(): void;
-    dragOverHandler(_: DragEvent): void;
-    dropHandler(_: DragEvent): void;
+    dragOverHandler(event: DragEvent): void;
+    dropHandler(event: DragEvent): void;
     dragLeaveHandler(_: DragEvent): void;
 }
 declare const projectInput: ProjectInput;

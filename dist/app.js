@@ -121,6 +121,13 @@ var ProjectState = /** @class */ (function (_super) {
         this.projects.push(newProject);
         this.callAllListeners();
     };
+    ProjectState.prototype.moveProject = function (projectId, newStatus) {
+        var project = this.projects.find(function (project) { return project.id === projectId; });
+        if (project) {
+            project.status = newStatus;
+            this.callAllListeners();
+        }
+    };
     return ProjectState;
 }(State));
 var Component = /** @class */ (function () {
@@ -164,7 +171,7 @@ var ListItem = /** @class */ (function (_super) {
         _this.project = project;
         _this.fillListItem(_this.project.title, _this.project.description, _this.persons);
         _this.configure();
-        _this.init('beforeend', project.id);
+        _this.init('beforeend', _this.project.id);
         return _this;
     }
     Object.defineProperty(ListItem.prototype, "persons", {
@@ -199,7 +206,8 @@ var ListItem = /** @class */ (function (_super) {
             .addEventListener('dragend', this.dragEndHandler);
     };
     ListItem.prototype.dragStartHandler = function (event) {
-        console.log(event);
+        event.dataTransfer.setData('text/plane', this.project.id);
+        event.dataTransfer.effectAllowed = 'move';
     };
     ListItem.prototype.dragEndHandler = function (_) {
         console.log('DragEnd');
@@ -338,13 +346,22 @@ var ProjectList = /** @class */ (function (_super) {
         this.getHTMLElementFromFragment()
             .addEventListener('dragleave', this.dragLeaveHandler);
     };
-    ProjectList.prototype.dragOverHandler = function (_) {
-        this.getHTMLElementFromFragment()
-            .querySelector('ul')
-            .classList
-            .add('droppable');
+    ProjectList.prototype.dragOverHandler = function (event) {
+        var _a;
+        if (((_a = event.dataTransfer) === null || _a === void 0 ? void 0 : _a.types[0]) === 'text/plane') {
+            event.preventDefault();
+            this.getHTMLElementFromFragment()
+                .querySelector('ul')
+                .classList
+                .add('droppable');
+        }
     };
-    ProjectList.prototype.dropHandler = function (_) {
+    ProjectList.prototype.dropHandler = function (event) {
+        var projectId = event.dataTransfer.getData('text/plane');
+        var projectStatus = this.type === 'active' ?
+            ProjectStatus.ACTIVE :
+            ProjectStatus.FINISHED;
+        ProjectState.getInstance().moveProject(projectId, projectStatus);
     };
     ProjectList.prototype.dragLeaveHandler = function (_) {
         this.getHTMLElementFromFragment()
@@ -355,6 +372,9 @@ var ProjectList = /** @class */ (function (_super) {
     __decorate([
         AutoBind
     ], ProjectList.prototype, "dragOverHandler", null);
+    __decorate([
+        AutoBind
+    ], ProjectList.prototype, "dropHandler", null);
     __decorate([
         AutoBind
     ], ProjectList.prototype, "dragLeaveHandler", null);

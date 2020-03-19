@@ -146,6 +146,15 @@ class ProjectState extends State<Project> {
         this.projects.push(newProject);
         this.callAllListeners();
     }
+
+    moveProject(projectId: string, newStatus: ProjectStatus) {
+        const project = this.projects.find(project => project.id === projectId);
+
+        if (project) {
+            project.status = newStatus;
+            this.callAllListeners();
+        }
+    }
 }
 
 abstract class Component {
@@ -213,7 +222,7 @@ class ListItem extends Component implements IDraggable {
         this.project = project;
         this.fillListItem(this.project.title, this.project.description, this.persons);
         this.configure();
-        this.init('beforeend', project.id);
+        this.init('beforeend', this.project.id);
     }
 
     private fillListItem(title: string, description: string, persons: string): void {
@@ -239,7 +248,8 @@ class ListItem extends Component implements IDraggable {
 
     @AutoBind
     dragStartHandler(event: DragEvent): void {
-        console.log(event)
+        event.dataTransfer!.setData('text/plane', this.project.id);
+        event.dataTransfer!.effectAllowed = 'move';
     }
 
     dragEndHandler(_: DragEvent): void {
@@ -406,14 +416,25 @@ class ProjectList extends Component implements IDropTarget{
     }
 
     @AutoBind
-    dragOverHandler(_: DragEvent): void {
-        this.getHTMLElementFromFragment()
-            .querySelector('ul')!
-            .classList
-            .add('droppable');
+    dragOverHandler(event: DragEvent): void {
+        if (event.dataTransfer?.types[0] === 'text/plane') {
+            event.preventDefault();
+
+            this.getHTMLElementFromFragment()
+                .querySelector('ul')!
+                .classList
+                .add('droppable');
+        }
     }
 
-    dropHandler(_: DragEvent): void {
+    @AutoBind
+    dropHandler(event: DragEvent): void {
+        const projectId = event.dataTransfer!.getData('text/plane');
+        const projectStatus = this.type  === 'active' ?
+            ProjectStatus.ACTIVE :
+            ProjectStatus.FINISHED;
+
+        ProjectState.getInstance().moveProject(projectId, projectStatus)
     }
 
     @AutoBind
