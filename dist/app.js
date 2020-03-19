@@ -23,16 +23,6 @@ var ProjectStatus;
     ProjectStatus[ProjectStatus["ACTIVE"] = 0] = "ACTIVE";
     ProjectStatus[ProjectStatus["FINISHED"] = 1] = "FINISHED";
 })(ProjectStatus || (ProjectStatus = {}));
-var ProjectItem = /** @class */ (function () {
-    function ProjectItem(id, title, description, people, status) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.people = people;
-        this.status = status;
-    }
-    return ProjectItem;
-}());
 /**
  * Validator
  * @param validatable {object}
@@ -85,6 +75,16 @@ function AutoBind(_, _2, descriptor) {
     };
     return adjDescriptor;
 }
+var Project = /** @class */ (function () {
+    function Project(id, title, description, people, status) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.people = people;
+        this.status = status;
+    }
+    return Project;
+}());
 var State = /** @class */ (function () {
     function State() {
         this.listeners = [];
@@ -117,14 +117,14 @@ var ProjectState = /** @class */ (function (_super) {
         return this.projects.slice();
     };
     ProjectState.prototype.addProject = function (title, description, people) {
-        var newProject = new ProjectItem(Math.random().toString(), title, description, people, ProjectStatus.ACTIVE);
+        var newProject = new Project(Math.random().toString(), title, description, people, ProjectStatus.ACTIVE);
         this.projects.push(newProject);
         this.callAllListeners();
     };
     return ProjectState;
 }(State));
-var Project = /** @class */ (function () {
-    function Project(templateSelector, hostSelector) {
+var Component = /** @class */ (function () {
+    function Component(templateSelector, hostSelector) {
         this.element = null;
         this.templateElement = document.querySelector(templateSelector);
         this.hostElement = document.querySelector(hostSelector);
@@ -133,9 +133,10 @@ var Project = /** @class */ (function () {
      * Return HTMLElement from the stored Fragment
      * @return {HTMLFormElement}
      */
-    Project.prototype.getHTMLElementFromFragment = function () {
+    Component.prototype.getHTMLElementFromFragment = function () {
         if (!this.element) {
-            this.element = document.importNode(this.templateElement.content, true).firstElementChild;
+            this.element = document.importNode(this.templateElement.content, true)
+                .firstElementChild;
         }
         return this.element;
     };
@@ -144,18 +145,39 @@ var Project = /** @class */ (function () {
      * @param position {InsertPosition}
      * @param element {HTMLElement}
      */
-    Project.prototype.attach = function (position, element) {
+    Component.prototype.attach = function (position, element) {
         this.hostElement.insertAdjacentElement(position, element);
     };
-    Project.prototype.assignIdToElement = function (id) {
+    Component.prototype.assignIdToElement = function (id) {
         this.getHTMLElementFromFragment().id = id;
     };
-    Project.prototype.init = function (position, id) {
+    Component.prototype.init = function (position, id) {
         this.assignIdToElement(id);
         this.attach(position, this.getHTMLElementFromFragment());
     };
-    return Project;
+    return Component;
 }());
+var ListItem = /** @class */ (function (_super) {
+    __extends(ListItem, _super);
+    function ListItem(templateSelector, hostSelector, project) {
+        var _this = _super.call(this, templateSelector, hostSelector) || this;
+        _this.fillListItem(project.title, project.description, project.people);
+        _this.init('beforeend', project.id);
+        return _this;
+    }
+    ListItem.prototype.fillListItem = function (title, description, people) {
+        this.getHTMLElementFromFragment()
+            .querySelector('h2')
+            .textContent = "Title: " + title;
+        this.getHTMLElementFromFragment()
+            .querySelector('h3')
+            .textContent = "Number of people: " + people;
+        this.getHTMLElementFromFragment()
+            .querySelector('p')
+            .textContent = "Description: " + description;
+    };
+    return ListItem;
+}(Component));
 /**
  * @class
  * @classdesc Render a form to the container
@@ -195,7 +217,7 @@ var ProjectInput = /** @class */ (function (_super) {
             required: true,
             min: 1
         };
-        var result = null;
+        var result;
         if (validate(titleValidatable) &&
             validate(descriptionValidatable) &&
             validate(peopleValidatable)) {
@@ -230,7 +252,7 @@ var ProjectInput = /** @class */ (function (_super) {
         AutoBind
     ], ProjectInput.prototype, "submitHandler", null);
     return ProjectInput;
-}(Project));
+}(Component));
 var ProjectList = /** @class */ (function (_super) {
     __extends(ProjectList, _super);
     function ProjectList(templateSelector, hostSelector, type) {
@@ -263,18 +285,12 @@ var ProjectList = /** @class */ (function (_super) {
         });
     };
     ProjectList.prototype.renderProjects = function (projects) {
-        var list = this.getHTMLElementFromFragment()
-            .querySelector('ul');
-        list.innerHTML = '';
+        this.getHTMLElementFromFragment()
+            .querySelector('ul').innerHTML = '';
         for (var _i = 0, projects_1 = projects; _i < projects_1.length; _i++) {
             var project = projects_1[_i];
-            list.appendChild(this.createListItem(project.title));
+            new ListItem('#single-project', "#" + this.listId, project);
         }
-    };
-    ProjectList.prototype.createListItem = function (title) {
-        var listItem = document.createElement('li');
-        listItem.textContent = title;
-        return listItem;
     };
     ProjectList.prototype.renderContent = function () {
         this.getHTMLElementFromFragment()
@@ -283,7 +299,7 @@ var ProjectList = /** @class */ (function (_super) {
             .querySelector('h2').textContent = this.type.toUpperCase() + " PROJECTS";
     };
     return ProjectList;
-}(Project));
+}(Component));
 var projectInput = new ProjectInput('#project-input', '#app', 'user-input');
 var projectList = new ProjectList('#project-list', '#app', 'active');
 var projectList2 = new ProjectList('#project-list', '#app', 'finished');

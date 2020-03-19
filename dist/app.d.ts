@@ -11,14 +11,6 @@ declare enum ProjectStatus {
     FINISHED = 1
 }
 declare type Listener<T> = (items: T[]) => void;
-declare class ProjectItem {
-    id: string;
-    title: string;
-    description: string;
-    people: number;
-    status: ProjectStatus;
-    constructor(id: string, title: string, description: string, people: number, status: ProjectStatus);
-}
 /**
  * Validator
  * @param validatable {object}
@@ -32,11 +24,19 @@ declare function validate(validatable: Validatable): boolean;
  * @param descriptor
  */
 declare function AutoBind(_: any, _2: string, descriptor: PropertyDescriptor): PropertyDescriptor;
+declare class Project {
+    id: string;
+    title: string;
+    description: string;
+    people: number;
+    status: ProjectStatus;
+    constructor(id: string, title: string, description: string, people: number, status: ProjectStatus);
+}
 declare class State<T> {
     protected listeners: Listener<T>[];
     addListener(listenerFn: Listener<T>): void;
 }
-declare class ProjectState extends State<ProjectItem> {
+declare class ProjectState extends State<Project> {
     private projects;
     private static instance;
     private constructor();
@@ -45,7 +45,7 @@ declare class ProjectState extends State<ProjectItem> {
     private getProjects;
     addProject(title: string, description: string, people: number): void;
 }
-declare abstract class Project {
+declare abstract class Component {
     element: HTMLFormElement | HTMLElement | null;
     templateElement: HTMLTemplateElement;
     hostElement: HTMLDivElement;
@@ -64,11 +64,15 @@ declare abstract class Project {
     protected assignIdToElement(id: string): void;
     protected init(position: InsertPosition, id: string): void;
 }
+declare class ListItem extends Component {
+    constructor(templateSelector: string, hostSelector: string, project: Project);
+    private fillListItem;
+}
 /**
  * @class
  * @classdesc Render a form to the container
  */
-declare class ProjectInput extends Project {
+declare class ProjectInput extends Component {
     titleInputElement: HTMLInputElement;
     descriptionInputElement: HTMLInputElement;
     peopleInputElement: HTMLInputElement;
@@ -84,13 +88,12 @@ declare class ProjectInput extends Project {
     private submitHandler;
     private configure;
 }
-declare class ProjectList extends Project {
+declare class ProjectList extends Component {
     type: 'active' | 'finished';
     listId: string;
     constructor(templateSelector: string, hostSelector: string, type: 'active' | 'finished');
     private filterProjectsByStatus;
     private renderProjects;
-    private createListItem;
     private renderContent;
 }
 declare const projectInput: ProjectInput;

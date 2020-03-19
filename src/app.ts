@@ -11,17 +11,6 @@ enum ProjectStatus {ACTIVE, FINISHED}
 
 type Listener<T> = (items: T[]) => void;
 
-class ProjectItem {
-    constructor(
-        public id: string,
-        public title: string,
-        public description: string,
-        public people: number,
-        public status: ProjectStatus
-    ) {
-    }
-}
-
 /**
  * Validator
  * @param validatable {object}
@@ -90,6 +79,17 @@ function AutoBind(
     return adjDescriptor;
 }
 
+class Project {
+    constructor(
+        public id: string,
+        public title: string,
+        public description: string,
+        public people: number,
+        public status: ProjectStatus
+    ) {
+    }
+}
+
 class State<T> {
     protected listeners: Listener<T>[] = [];
 
@@ -98,8 +98,8 @@ class State<T> {
     }
 }
 
-class ProjectState extends State<ProjectItem> {
-    private projects: ProjectItem[] = [];
+class ProjectState extends State<Project> {
+    private projects: Project[] = [];
     private static instance: ProjectState;
 
     private constructor() {
@@ -125,7 +125,7 @@ class ProjectState extends State<ProjectItem> {
     }
 
     addProject(title: string, description: string, people: number) {
-        const newProject = new ProjectItem(
+        const newProject = new Project(
             Math.random().toString(),
             title,
             description,
@@ -138,7 +138,7 @@ class ProjectState extends State<ProjectItem> {
     }
 }
 
-abstract class Project {
+abstract class Component {
     element: HTMLFormElement | HTMLElement | null;
     templateElement: HTMLTemplateElement;
     hostElement: HTMLDivElement;
@@ -155,7 +155,8 @@ abstract class Project {
      */
     protected getHTMLElementFromFragment(): HTMLFormElement | HTMLElement {
         if (!this.element) {
-            this.element = document.importNode(this.templateElement.content, true).firstElementChild as HTMLFormElement | HTMLElement;
+            this.element = document.importNode(this.templateElement.content, true)
+                .firstElementChild as HTMLFormElement | HTMLElement;
         }
 
         return this.element;
@@ -180,11 +181,35 @@ abstract class Project {
     }
 }
 
+class ListItem extends Component {
+
+    constructor(templateSelector: string, hostSelector: string, project: Project) {
+        super(templateSelector, hostSelector);
+
+        this.fillListItem(project.title, project.description, project.people);
+        this.init('beforeend', project.id);
+    }
+
+    private fillListItem(title: string, description: string, people: number): void {
+        this.getHTMLElementFromFragment()
+            .querySelector('h2')!
+            .textContent = `Title: ${title}`;
+
+        this.getHTMLElementFromFragment()
+            .querySelector('h3')!
+            .textContent = `Number of people: ${people}`;
+
+        this.getHTMLElementFromFragment()
+            .querySelector('p')!
+            .textContent = `Description: ${description}`;
+    }
+}
+
 /**
  * @class
  * @classdesc Render a form to the container
  */
-class ProjectInput extends Project {
+class ProjectInput extends Component {
     titleInputElement: HTMLInputElement;
     descriptionInputElement: HTMLInputElement;
     peopleInputElement: HTMLInputElement;
@@ -213,18 +238,18 @@ class ProjectInput extends Project {
             value: enteredTitle,
             required: true
         };
-        const descriptionValidatable = {
+        const descriptionValidatable: Validatable = {
             value: enteredDescription,
             required: true,
             minLength: 5
         };
-        const peopleValidatable = {
+        const peopleValidatable: Validatable = {
             value: enteredPeople,
             required: true,
             min: 1
         };
 
-        let result: [string, string, number] | null = null;
+        let result: [string, string, number] | null;
 
         if (
             validate(titleValidatable) &&
@@ -268,7 +293,7 @@ class ProjectInput extends Project {
     }
 }
 
-class ProjectList extends Project {
+class ProjectList extends Component {
     type: 'active' | 'finished';
     listId: string;
 
@@ -283,7 +308,7 @@ class ProjectList extends Project {
         this.listId = `${this.type}-project-list`;
 
         ProjectState.getInstance()
-            .addListener((projects: ProjectItem[]) => {
+            .addListener((projects: Project[]) => {
                 this.renderProjects(this.filterProjectsByStatus(projects));
             });
 
@@ -291,7 +316,7 @@ class ProjectList extends Project {
         this.renderContent();
     }
 
-    private filterProjectsByStatus(projects: ProjectItem[]): ProjectItem[] {
+    private filterProjectsByStatus(projects: Project[]): Project[] {
         return projects.filter(item => {
             let result: boolean;
 
@@ -312,23 +337,13 @@ class ProjectList extends Project {
         });
     }
 
-    private renderProjects(projects: ProjectItem[]) {
-        const list = this.getHTMLElementFromFragment()
-            .querySelector('ul')!;
-
-        list.innerHTML = '';
+    private renderProjects(projects: Project[]) {
+        this.getHTMLElementFromFragment()
+            .querySelector('ul')!.innerHTML = '';
 
         for (let project of projects) {
-            list.appendChild(this.createListItem(project.title))
+            new ListItem('#single-project', `#${this.listId}`, project);
         }
-    }
-
-    private createListItem(title: string): HTMLLIElement {
-        const listItem = document.createElement('li');
-
-        listItem.textContent = title;
-
-        return listItem;
     }
 
     private renderContent() {
