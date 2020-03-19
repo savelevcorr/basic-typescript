@@ -6,12 +6,19 @@ interface Validatable {
     min?: number;
     max?: number;
 }
-declare type ProjectItem = {
+declare enum ProjectStatus {
+    ACTIVE = 0,
+    FINISHED = 1
+}
+declare type Listener = (items: ProjectItem[]) => void;
+declare class ProjectItem {
     id: string;
     title: string;
     description: string;
-    numberOfPeople: number;
-};
+    people: number;
+    status: ProjectStatus;
+    constructor(id: string, title: string, description: string, people: number, status: ProjectStatus);
+}
 /**
  * Validator
  * @param validatable {object}
@@ -33,8 +40,8 @@ declare class ProjectState {
     static getInstance(): ProjectState;
     private callAllListeners;
     private getProjects;
-    addListener(listenerFn: Function): void;
-    addProject(title: string, description: string, numberOfPeople: number): void;
+    addListener(listenerFn: Listener): void;
+    addProject(title: string, description: string, people: number): void;
 }
 declare abstract class Project {
     element: HTMLFormElement | HTMLElement | null;

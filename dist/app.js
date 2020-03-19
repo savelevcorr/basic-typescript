@@ -18,6 +18,21 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var ProjectStatus;
+(function (ProjectStatus) {
+    ProjectStatus[ProjectStatus["ACTIVE"] = 0] = "ACTIVE";
+    ProjectStatus[ProjectStatus["FINISHED"] = 1] = "FINISHED";
+})(ProjectStatus || (ProjectStatus = {}));
+var ProjectItem = /** @class */ (function () {
+    function ProjectItem(id, title, description, people, status) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.people = people;
+        this.status = status;
+    }
+    return ProjectItem;
+}());
 /**
  * Validator
  * @param validatable {object}
@@ -93,13 +108,8 @@ var ProjectState = /** @class */ (function () {
     ProjectState.prototype.addListener = function (listenerFn) {
         this.listeners.push(listenerFn);
     };
-    ProjectState.prototype.addProject = function (title, description, numberOfPeople) {
-        var newProject = {
-            id: Math.random().toString(),
-            title: title,
-            description: description,
-            numberOfPeople: numberOfPeople
-        };
+    ProjectState.prototype.addProject = function (title, description, people) {
+        var newProject = new ProjectItem(Math.random().toString(), title, description, people, ProjectStatus.ACTIVE);
         this.projects.push(newProject);
         this.callAllListeners();
     };
@@ -231,7 +241,8 @@ var ProjectList = /** @class */ (function (_super) {
         for (var _i = 0, projects_1 = projects; _i < projects_1.length; _i++) {
             var project = projects_1[_i];
             this.getHTMLElementFromFragment()
-                .querySelector('ul').appendChild(this.createListItem(project.title));
+                .querySelector('ul')
+                .appendChild(this.createListItem(project.title));
         }
     };
     ProjectList.prototype.createListItem = function (title) {

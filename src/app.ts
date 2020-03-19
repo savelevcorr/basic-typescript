@@ -7,11 +7,19 @@ interface Validatable {
     max?: number
 }
 
-type ProjectItem = {
-    id: string,
-    title: string,
-    description: string,
-    numberOfPeople: number
+enum ProjectStatus {ACTIVE, FINISHED}
+
+type Listener = (items: ProjectItem[]) => void;
+
+class ProjectItem {
+    constructor(
+        public id: string,
+        public title: string,
+        public description: string,
+        public people: number,
+        public status: ProjectStatus
+        ) {
+    }
 }
 
 /**
@@ -83,7 +91,7 @@ function AutoBind(
 }
 
 class ProjectState {
-    private listeners: Function[] = [];
+    private listeners: Listener[] = [];
     private projects: ProjectItem[] = [];
     private static instance: ProjectState;
 
@@ -107,17 +115,18 @@ class ProjectState {
         return this.projects.slice();
     }
 
-    addListener(listenerFn: Function) {
+    addListener(listenerFn: Listener) {
         this.listeners.push(listenerFn);
     }
 
-    addProject(title: string, description: string, numberOfPeople: number) {
-        const newProject: ProjectItem = {
-            id: Math.random().toString(),
+    addProject(title: string, description: string, people: number) {
+        const newProject = new ProjectItem(
+            Math.random().toString(),
             title,
             description,
-            numberOfPeople
-        };
+            people,
+            ProjectStatus.ACTIVE
+        );
 
         this.projects.push(newProject);
         this.callAllListeners();
@@ -275,7 +284,8 @@ class ProjectList extends Project {
     private renderProjects(projects: ProjectItem[]) {
         for (let project of projects) {
             this.getHTMLElementFromFragment()
-                .querySelector('ul')!.appendChild(this.createListItem(project.title))
+                .querySelector('ul')!
+                .appendChild(this.createListItem(project.title))
         }
     }
 
