@@ -182,22 +182,36 @@ abstract class Component {
 }
 
 class ListItem extends Component {
+    project: Project;
+
+    get persons(): string {
+        let result: string;
+
+        if (this.project.people === 1) {
+            result = `${this.project.people} person`;
+        } else {
+            result = `${this.project.people} persons`;
+        }
+
+        return result;
+    }
 
     constructor(templateSelector: string, hostSelector: string, project: Project) {
         super(templateSelector, hostSelector);
 
-        this.fillListItem(project.title, project.description, project.people);
+        this.project = project;
+        this.fillListItem(this.project.title, this.project.description, this.persons);
         this.init('beforeend', project.id);
     }
 
-    private fillListItem(title: string, description: string, people: number): void {
+    private fillListItem(title: string, description: string, persons: string): void {
         this.getHTMLElementFromFragment()
             .querySelector('h2')!
             .textContent = `Title: ${title}`;
 
         this.getHTMLElementFromFragment()
             .querySelector('h3')!
-            .textContent = `Number of people: ${people}`;
+            .textContent = `Number of people: ${persons}`;
 
         this.getHTMLElementFromFragment()
             .querySelector('p')!

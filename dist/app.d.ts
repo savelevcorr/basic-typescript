@@ -65,6 +65,8 @@ declare abstract class Component {
     protected init(position: InsertPosition, id: string): void;
 }
 declare class ListItem extends Component {
+    project: Project;
+    get persons(): string;
     constructor(templateSelector: string, hostSelector: string, project: Project);
     private fillListItem;
 }

@@ -161,17 +161,32 @@ var ListItem = /** @class */ (function (_super) {
     __extends(ListItem, _super);
     function ListItem(templateSelector, hostSelector, project) {
         var _this = _super.call(this, templateSelector, hostSelector) || this;
-        _this.fillListItem(project.title, project.description, project.people);
+        _this.project = project;
+        _this.fillListItem(_this.project.title, _this.project.description, _this.persons);
         _this.init('beforeend', project.id);
         return _this;
     }
-    ListItem.prototype.fillListItem = function (title, description, people) {
+    Object.defineProperty(ListItem.prototype, "persons", {
+        get: function () {
+            var result;
+            if (this.project.people === 1) {
+                result = this.project.people + " person";
+            }
+            else {
+                result = this.project.people + " persons";
+            }
+            return result;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    ListItem.prototype.fillListItem = function (title, description, persons) {
         this.getHTMLElementFromFragment()
             .querySelector('h2')
             .textContent = "Title: " + title;
         this.getHTMLElementFromFragment()
             .querySelector('h3')
-            .textContent = "Number of people: " + people;
+            .textContent = "Number of people: " + persons;
         this.getHTMLElementFromFragment()
             .querySelector('p')
             .textContent = "Description: " + description;
