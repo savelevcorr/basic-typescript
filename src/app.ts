@@ -81,6 +81,9 @@ namespace DragDropApp {
         return adjDescriptor;
     }
 
+    /**
+     * @class
+     */
     class State<T> {
         protected listeners: Listener<T>[] = [];
 
@@ -89,6 +92,9 @@ namespace DragDropApp {
         }
     }
 
+    /**
+     * @class
+     */
     class ProjectState extends State<Project> {
         private projects: Project[] = [];
         private static instance: ProjectState;
