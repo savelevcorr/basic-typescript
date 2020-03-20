@@ -1,6 +1,4 @@
 "use strict";
-/// <reference path="drag-drop-interfaces.ts" />
-/// <reference path="project-model.ts" />
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -20,6 +18,27 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var DragDropApp;
+(function (DragDropApp) {
+    var ProjectStatus;
+    (function (ProjectStatus) {
+        ProjectStatus[ProjectStatus["ACTIVE"] = 0] = "ACTIVE";
+        ProjectStatus[ProjectStatus["FINISHED"] = 1] = "FINISHED";
+    })(ProjectStatus = DragDropApp.ProjectStatus || (DragDropApp.ProjectStatus = {}));
+    var Project = /** @class */ (function () {
+        function Project(id, title, description, people, status) {
+            this.id = id;
+            this.title = title;
+            this.description = description;
+            this.people = people;
+            this.status = status;
+        }
+        return Project;
+    }());
+    DragDropApp.Project = Project;
+})(DragDropApp || (DragDropApp = {}));
+/// <reference path="drag-drop-interfaces.ts" />
+/// <reference path="project-model.ts" />
 var DragDropApp;
 (function (DragDropApp) {
     /**

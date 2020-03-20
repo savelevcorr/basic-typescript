@@ -57,9 +57,17 @@
         "version": "3e0a459888f32b42138d5a39f706ff2d55d500ab1031e0988b5568b0f67c2303",
         "signature": "3e0a459888f32b42138d5a39f706ff2d55d500ab1031e0988b5568b0f67c2303"
       },
+      "./src/drag-drop-interfaces.ts": {
+        "version": "9f8a8fba33e8a69c3fd7afb1fe5faeac66140c2f0627c50953ba85ced72f367a",
+        "signature": "5e69166f5814e4a4deaf127dde4a45166d181b94f21505fbdff8879d182707d3"
+      },
+      "./src/project-model.ts": {
+        "version": "1179321be234690ffabffc844aaf65aec9840a3e06db7128e845d2b0c4d2d99b",
+        "signature": "f8926176e182b3aa54d19e39121cd0d039a18457537d78bf77f83f2cf29e5f40"
+      },
       "./src/app.ts": {
-        "version": "bac957a0bda03b77b897cae3509b6e77f719abc7b481c8a279b5d76e6d274893",
-        "signature": "bc1bf4744523083f20fb12a33b411e377b42f43d8e9c2c4cde184eeddccdbb4b"
+        "version": "8ea679c7d53ae2e845c7825ee25971b212bd386558a6cbb37974c9c87089bafc",
+        "signature": "6386725f8e424c37cd7da79c9e486c9966877f9ad843740206de88170c5d7c31"
       }
     },
     "options": {
@@ -74,6 +82,7 @@
       "outDir": "./dist",
       "rootDir": "./src",
       "composite": true,
+      "isolatedModules": true,
       "strict": true,
       "noUnusedLocals": true,
       "noUnusedParameters": true,
@@ -84,9 +93,29 @@
       "watch": true,
       "configFilePath": "./tsconfig.json"
     },
-    "referencedMap": {},
+    "referencedMap": {
+      "./src/app.ts": [
+        "./src/drag-drop-interfaces.ts",
+        "./src/project-model.ts"
+      ]
+    },
     "exportedModulesMap": {},
     "semanticDiagnosticsPerFile": [
+      "./src/project-model.ts",
+      [
+        "./src/drag-drop-interfaces.ts",
+        [
+          {
+            "file": "./src/drag-drop-interfaces.ts",
+            "start": 0,
+            "length": 9,
+            "messageText": "All files must be modules when the '--isolatedModules' flag is provided.",
+            "category": 1,
+            "code": 1208
+          }
+        ]
+      ],
+      "./src/app.ts",
       "../../../../usr/local/lib/node_modules/typescript/lib/lib.es5.d.ts",
       "../../../../usr/local/lib/node_modules/typescript/lib/lib.es2015.d.ts",
       "../../../../usr/local/lib/node_modules/typescript/lib/lib.dom.d.ts",
@@ -100,8 +129,7 @@
       "../../../../usr/local/lib/node_modules/typescript/lib/lib.es2015.proxy.d.ts",
       "../../../../usr/local/lib/node_modules/typescript/lib/lib.es2015.reflect.d.ts",
       "../../../../usr/local/lib/node_modules/typescript/lib/lib.es2015.symbol.d.ts",
-      "../../../../usr/local/lib/node_modules/typescript/lib/lib.es2015.symbol.wellknown.d.ts",
-      "./src/app.ts"
+      "../../../../usr/local/lib/node_modules/typescript/lib/lib.es2015.symbol.wellknown.d.ts"
     ]
   },
   "version": "3.7.5"
