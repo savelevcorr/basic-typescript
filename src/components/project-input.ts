@@ -1,7 +1,7 @@
-import {Component} from "./base-component.js";
-import {IValidatable, validate} from "../util/validation.js";
-import {ProjectState} from "../state/project-state.js";
-import {AutoBind} from "../decorators/auto-bind.js";
+import {Component} from "./base-component";
+import {IValidatable, validate} from "../util/validation";
+import {ProjectState} from "../state/project-state";
+import {AutoBind} from "../decorators/auto-bind";
 
 /**
  * @class

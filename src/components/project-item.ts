@@ -1,7 +1,7 @@
-import {IDraggable} from '../models/drag-drop.js';
-import {Component} from '../components/base-component.js';
-import {Project} from "../models/project.js";
-import {AutoBind} from "../decorators/auto-bind.js";
+import {IDraggable} from '../models/drag-drop';
+import {Component} from './base-component';
+import {Project} from "../models/project";
+import {AutoBind} from "../decorators/auto-bind";
 
 export class ListItem extends Component implements IDraggable {
     project: Project;

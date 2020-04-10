@@ -1,9 +1,9 @@
-import {IDropTarget} from '../models/drag-drop.js';
-import {Component} from '../components/base-component.js';
-import {Project, ProjectStatus} from "../models/project.js";
-import {ProjectState} from "../state/project-state.js";
-import {AutoBind} from "../decorators/auto-bind.js";
-import {ListItem} from "./project-item.js";
+import {IDropTarget} from '../models/drag-drop';
+import {Component} from './base-component';
+import {Project, ProjectStatus} from "../models/project";
+import {ProjectState} from "../state/project-state";
+import {AutoBind} from "../decorators/auto-bind";
+import {ListItem} from "./project-item";
 
 
 export class ProjectList extends Component implements IDropTarget {
